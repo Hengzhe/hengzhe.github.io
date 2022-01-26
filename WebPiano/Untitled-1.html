@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebPiano</title>
+
+    <style>
+        body{
+            background-color: #444;
+        }
+        #KeyDot{
+            background-color: red;
+            height: 20px;
+            width: 20px;
+            position:absolute;
+            left: 9%;
+            top: 50%
+        }
+        #Piano{
+            background-color:#000;
+            height:40%;
+            width: 84%;
+            position: absolute;
+	        left: 50%;
+            top:15%;
+	        transform: translate(-50%);
+            text-align: center;
+            padding: 5px;
+        }
+        #ReadmeB{
+            background-color: coral;
+            border-radius: 3px;
+            position:absolute;
+            right: 10%;
+            top: 60%;
+            font-family: 楷体,Arial, Helvetica, sans-serif;
+            font-size: large;
+            color:white;
+        }
+        #Readme{
+            font-family: 楷体,Arial, Helvetica, sans-serif;
+            color: #333;
+            background-color: #ffffffc0;
+            position:absolute;
+            right: 20%;
+            top: 60%;
+            padding: 20px;
+            z-index: 999;
+        }
+        #Voice{
+            position: absolute;
+            left:8%;
+            top: 60%;
+            font-family: 楷体,Arial, Helvetica, sans-serif;
+            color: #333;
+            background-color: #ffffffc0;
+            position:absolute;
+            padding:10px;
+            border-radius: 3px;
+            line-height: 2em;
+        }
+    </style>
+
+</head>
+<body id="Body">
+
+    <h1 style="text-align: center;font-family: classical,'Times New Roman', Times, serif;
+    font-size: 30px;color: rgb(185, 70, 28);margin-left: 0;margin-top: 4%;">
+        Web Piano
+    </h1>
+    <a href="http://hengzhe.github.io" style="color: rgb(59, 68, 184);
+    position:absolute;top:5px;right:5px;" >MyBlog</a>
+
+    <!-- 一个琴键长度300，宽度48 -->
+    <div id="Piano">
+        <img src="pic.bmp" alt="未成功加载钢琴图" height=100% width=100%>
+    </div>                  
+
+    <div id="KeyDot">
+    </div>
+
+    <audio id="audio"></audio>
+
+    <!-- 键盘弹奏 -->
+    <script>
+
+        // 键盘-频率号 表
+        var Key2Freq={
+            90:1,
+            88:2,
+            67:3,
+            86:4,
+            66:5,
+            78:6,
+            77:7,
+
+            65:8,
+            83:9,
+            68:10,
+            70:11,
+            71:12,
+            72:13,
+            74:14,
+
+            81:15,
+            87:16,
+            69:17,
+            82:18,
+            84:19,
+            89:20,
+            85:21
+        }
+
+        var flag=0;
+        var x=document.getElementById("audio");
+        var KeyDot=document.getElementById("KeyDot")
+
+        // 键盘响应
+        document.onkeydown=function(e){
+            if (e.keyCode==80)
+                {
+                    flag=1-flag;
+                }
+                else
+                {
+                    freqNum=Key2Freq[e.keyCode]
+                if (flag==0)
+                {x.src="Harmonic/"+freqNum+".flac"
+                KeyDot.style.setProperty("left",(9-4+4*Key2Freq[e.keyCode])+"%")
+                KeyDot.style.setProperty("top","50%")
+                 }
+                else
+                {
+                    x.src="Harmonic/"+freqNum+"_sh.flac"
+                    KeyDot.style.setProperty("left",(11-4+4*Key2Freq[e.keyCode])+"%")
+                    KeyDot.style.setProperty("top","35%")
+                }
+                x.play()
+
+                }
+            }
+        
+
+    </script>
+
+    <p id="MouseRead" style="color: red;font-size: large;"></p>
+    <!-- 鼠标弹奏 -->
+    <script>
+        // 读取屏幕大小
+        //1366*768分辨率下读得，x轴白键起始点100，末点1200，算得一个键的宽度是52.4，因此黑键起始为126.
+        //y轴白键250-350，黑键100-250
+        window.onload=function(){
+        //Body=document.getElementById("Body");
+        var H0 = window.screen.height;
+        var W0 = window.screen.width;
+        xyPrint.innerText=W0+","+H0;}
+
+        var x=document.getElementById("audio");
+        var KeyDot=document.getElementById("KeyDot")
+
+        var xyPrint=document.getElementById("MouseRead")
+        document.onmousedown=function(event)
+        {
+             var x=document.getElementById("audio");
+             var KeyDot=document.getElementById("KeyDot")
+             var H0 = window.screen.height;
+             var W0 = window.screen.width;
+            var yscale=(event.y)*768/H0;
+            if ((yscale>250)&(yscale<350))
+            {
+                var freqNum=Math.ceil(((event.x)*1366/W0-100)/52.4)
+                xyPrint.innerText=freqNum;
+                x.src="Harmonic/"+freqNum+".flac";
+                KeyDot.style.setProperty("left",(9-4+4*freqNum)+"%")
+                KeyDot.style.setProperty("top","50%")
+                x.play();
+            }
+            if ((yscale>100)&(yscale<250))
+            {
+                var freqNum=Math.ceil(((event.x)*1366/W0-126)/52.4);
+                x.src="Harmonic/"+freqNum+"_sh.flac";
+                xyPrint.innerText=freqNum;
+                KeyDot.style.setProperty("left",(11-4+4*freqNum)+"%")
+                KeyDot.style.setProperty("top","35%")
+                x.play()
+            }
+        }
+    </script>
+
+    <button id="ReadmeB">
+        查看说明
+    </button>
+
+    <div id="Readme"> 
+        这是一个网页电子琴，第一个白琴键是C4（频率261.6Hz）<br>
+        可用键盘或鼠标/触屏手机弹奏。
+        <br>
+        <br>
+        <b>鼠标</b>
+        ：在琴键对应位置按下即可
+        <br>
+        <br>
+        <b>键盘</b>：电脑键盘z-m对应C4到B4，a-j对应C5到B5，q-u对应C6-B6.
+        <br>
+        例如，两只老虎C调按键顺序（节奏脑补）：
+        <br>
+        asda,asda,dfg,dfg,ghgfda,ghgfda,sba,sba
+        <br>
+        按下电脑键"p"可在原有基础上升半音，如按下P后再按z将对应第一个黑琴键
+
+    </div>
+    <script>
+        var readme=document.getElementById("Readme");
+        readme.style.display="none";
+        flag=0;
+        var Button1=document.getElementById("ReadmeB");
+        Button1.onclick=function(){
+            if (flag==0)
+            {
+                readme.style.display="block";
+                Button1.innerText="关闭说明";
+            }
+            else
+            {
+                readme.style.display="none";
+                Button1.innerText="查看说明";
+            }
+
+            flag=1-flag;
+        }
+    </script>
+
+    <div id="Voice">
+        <b>音色选择</b>
+        <br>
+        <form action="form_action.asp" method="get">
+            <input type="radio" name="radio" value="1">钢琴
+            <input type="radio" name="radio" value="2">正弦波
+            <input type="radio" name="radio" value="3">吉他
+            <input type="radio" name="radio" value="4">古筝<br>
+    
+            <input type="radio" name="radio" value="5">编钟
+            <input type="radio" name="radio" value="6">竖琴
+            <input type="radio" name="radio" value="7">小提琴
+            <input type="radio" name="radio" value="8">手风琴<br>
+    
+            <input type="radio" name="radio" value="9">***
+            </form>
+    </div>
+
+
+</body>
+</html>
