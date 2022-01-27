@@ -55,7 +55,7 @@
             top: 60%;
             font-family: 楷体,Arial, Helvetica, sans-serif;
             color: #333;
-            background-color:  rgba(255,255,255,200);
+            background-color: rgba(255,255,255,200);
             position:absolute;
             padding:10px;
             border-radius: 3px;
@@ -83,8 +83,27 @@
 
     <audio id="audio"></audio>
 
+    <div id="Voice">
+        <b>音色选择</b>
+        <br>
+        <form action="form_action.asp" method="get">
+            <input type="radio" name="radio" value="Piano">钢琴
+            <input type="radio" name="radio" value="Harmonic">正弦波
+            <input type="radio" name="radio" value="3">吉他
+            <input type="radio" name="radio" value="4">古筝<br>
+    
+            <input type="radio" name="radio" value="5">编钟
+            <input type="radio" name="radio" value="Harp">竖琴
+            <input type="radio" name="radio" value="Violin">小提琴
+            <input type="radio" name="radio" value="8">手风琴<br>
+    
+            <input type="radio" name="radio" value="9">***
+            </form>
+    </div>
+
     <!-- 键盘弹奏 -->
     <script>
+        
 
         // 键盘-频率号 表
         var Key2Freq={
@@ -119,6 +138,14 @@
 
         // 键盘响应
         document.onkeydown=function(e){
+
+            var voiceTag="piano";
+            var obj = document.getElementsByName("radio");           
+             if (obj[1].checked) {voiceTag="Harmonic"; }
+             if (obj[5].checked) voiceTag="Harp"; 
+             if (obj[6].checked) voiceTag="Violin";      
+
+
             if (e.keyCode==80)
                 {
                     flag=1-flag;
@@ -127,13 +154,13 @@
                 {
                     freqNum=Key2Freq[e.keyCode]
                 if (flag==0)
-                {x.src="Harmonic/"+freqNum+".flac"
+                {x.src=voiceTag+"/"+freqNum+".flac"
                 KeyDot.style.setProperty("left",(9-4+4*Key2Freq[e.keyCode])+"%")
                 KeyDot.style.setProperty("top","50%")
                  }
                 else
                 {
-                    x.src="Harmonic/"+freqNum+"_sh.flac"
+                    x.src=voiceTag+"/"+freqNum+"_sh.flac"
                     KeyDot.style.setProperty("left",(11-4+4*Key2Freq[e.keyCode])+"%")
                     KeyDot.style.setProperty("top","35%")
                 }
@@ -163,6 +190,12 @@
         var xyPrint=document.getElementById("MouseRead")
         document.onmousedown=function(event)
         {
+            var voiceTag="piano";
+            var obj = document.getElementsByName("radio");           
+            if (obj[1].checked) voiceTag="Harmonic" 
+            if (obj[5].checked) voiceTag="Harp" 
+            if (obj[6].checked) voiceTag="Violin"
+
              var x=document.getElementById("audio");
              var KeyDot=document.getElementById("KeyDot")
              var H0 = window.screen.height;
@@ -172,7 +205,7 @@
             {
                 var freqNum=Math.ceil(((event.x)*1366/W0-100)/52.4)
                 xyPrint.innerText=freqNum;
-                x.src="Harmonic/"+freqNum+".flac";
+                x.src=voiceTag+"/"+freqNum+".flac";
                 KeyDot.style.setProperty("left",(9-4+4*freqNum)+"%")
                 KeyDot.style.setProperty("top","50%")
                 x.play();
@@ -180,7 +213,7 @@
             if ((yscale>100)&(yscale<250))
             {
                 var freqNum=Math.ceil(((event.x)*1366/W0-126)/52.4);
-                x.src="Harmonic/"+freqNum+"_sh.flac";
+                x.src=voiceTag+"/"+freqNum+"_sh.flac";
                 xyPrint.innerText=freqNum;
                 KeyDot.style.setProperty("left",(11-4+4*freqNum)+"%")
                 KeyDot.style.setProperty("top","35%")
@@ -231,24 +264,6 @@
             flag=1-flag;
         }
     </script>
-
-    <div id="Voice">
-        <b>音色选择</b>
-        <br>
-        <form action="form_action.asp" method="get">
-            <input type="radio" name="radio" value="1">钢琴
-            <input type="radio" name="radio" value="2">正弦波
-            <input type="radio" name="radio" value="3">吉他
-            <input type="radio" name="radio" value="4">古筝<br>
-    
-            <input type="radio" name="radio" value="5">编钟
-            <input type="radio" name="radio" value="6">竖琴
-            <input type="radio" name="radio" value="7">小提琴
-            <input type="radio" name="radio" value="8">手风琴<br>
-    
-            <input type="radio" name="radio" value="9">***
-            </form>
-    </div>
 
 
 </body>
